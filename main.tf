@@ -81,10 +81,10 @@ resource "aws_security_group" "ssh_access" {
 #---------------Ec2 Instance creation-------------#
 
 resource "aws_instance" "frontend" {
-  ami           = var.ami_id
-  instance_type = var.instance_type
-  key_name = aws_key_pair.auth_key.key_name
-  user_data = file("userdata.sh")
+  ami                    = var.ami_id
+  instance_type          = var.instance_type
+  key_name               = aws_key_pair.auth_key.key_name
+  user_data              = file("userdata.sh")
   vpc_security_group_ids = [aws_security_group.ssh_access.id, aws_security_group.http_access.id]
   tags = {
     Name = "${var.project_name}-${var.project_env}-frontend"
@@ -94,12 +94,22 @@ resource "aws_instance" "frontend" {
   }
 }
 
-#-----------------Adding DNS record in Route53-------#
+#-----------------Adding elastic ip---------------#
+
+resource "aws_eip" "frontend" {
+  instance = aws_instance.frontend.id
+  domain   = "vpc"
+  tags = {
+    Name = "${var.project_name}-${var.project_env}-frontend"
+  }
+}
+
+#-----------------Pointing eip in Route53---------#
 
 resource "aws_route53_record" "frontend" {
-  zone_id = data.aws_route53_zone.selected.id 
+  zone_id = data.aws_route53_zone.selected.id
   name    = "${var.hostname}.${var.domain_name}"
   type    = "A"
   ttl     = 60
-  records = [aws_instance.frontend.public_ip]
+  records = [aws_eip.frontend.public_ip]
 }

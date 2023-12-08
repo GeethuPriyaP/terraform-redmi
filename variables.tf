@@ -11,7 +11,7 @@ variable "project_env" {
 variable "instance_type" {
   type        = string
   description = "instance type"
-} 
+}
 
 variable "region" {
   type        = string
