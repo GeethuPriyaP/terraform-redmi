@@ -1,0 +1,5 @@
+project_name = "redmi"
+project_env = "prod"
+instance_type = "t2.micro"
+region = "ap-south-1"
+ami_id = "ami-02e94b011299ef128"
