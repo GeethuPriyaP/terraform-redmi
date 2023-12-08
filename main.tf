@@ -93,3 +93,13 @@ resource "aws_instance" "frontend" {
     create_before_destroy = true
   }
 }
+
+#-----------------Adding DNS record in Route53-------#
+
+resource "aws_route53_record" "frontend" {
+  zone_id = data.aws_route53_zone.selected.id 
+  name    = "${var.hostname}.${var.domain_name}"
+  type    = "A"
+  ttl     = 60
+  records = [aws_instance.frontend.public_ip]
+}

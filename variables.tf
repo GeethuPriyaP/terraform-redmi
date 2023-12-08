@@ -24,3 +24,13 @@ variable "ami_id" {
   description = "ami id"
 }
 
+variable "domain_name" {
+  type        = string
+  description = "domain name"
+}
+
+variable "hostname" {
+  type        = string
+  description = "host name"
+}
+
