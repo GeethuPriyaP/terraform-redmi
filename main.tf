@@ -69,3 +69,19 @@ resource "aws_security_group" "ssh_access" {
     Name = "${var.project_name}-${var.project_env}-ssh_access"
   }
 }
+
+#---------------Ec2 Instance creation-------------#
+
+resource "aws_instance" "frontend" {
+  ami           = var.ami_id
+  instance_type = var.instance_type
+  key_name = aws_key_pair.auth_key.key_name
+  user_data = file("userdata.sh")
+  vpc_security_group_ids = [aws_security_group.ssh_access.id, aws_security_group.http_access.id]
+  tags = {
+    Name = "${var.project_name}-${var.project_env}-frontend"
+  }
+  lifecycle {
+    create_before_destroy = true
+  }
+}
